@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vehicle - Loss Report",
+  "type": "object",
+  "properties": {
+    "claim_id": {"type": "string"},
+    "inspection_date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "loss_date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "inspection_location": {"type": "string"},
+    "registration": {"type": "string"},
+    "rc_no": {"type": "string"},
+    "dl_no": {"type": "string"},
+    "injuries_reported": {"type": "boolean"},
+    "estimated_damage_cost": {"type": "number"},
+    "approved_repair_amount": {"type": "number"},
+    "total_loss": {"type": "boolean"},
+    "claim_status": {"type": "string"}
+  },
+  "required": [
+    "claim_id",
+    "loss_date",
+    "registration",
+    "rc_no",
+    "dl_no"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vehicle - Registration Certificate",
+  "type": "object",
+  "properties": {
+    "claim_id": {"type": "string"},
+    "rc_no": {"type": "string"},
+    "registration": {"type": "string"},
+    "owner": {"type": "string"},
+    "vehicle_model": {"type": "string"},
+    "manufacture_year": {"type": "string", "pattern": "^\\d{4}$"},
+    "fuel_type": {"type": "string"},
+    "color": {"type": "string"},
+    "notes": {"type": "string"}
+  },
+  "required": ["claim_id", "rc_no", "registration"]
+}

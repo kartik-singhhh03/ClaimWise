@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vehicle - Driving License",
+  "type": "object",
+  "properties": {
+    "claim_id": {"type": "string"},
+    "dl_no": {"type": "string"},
+    "name": {"type": "string"},
+    "dob": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "address": {"type": "string"},
+    "valid_from": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "valid_to": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "issuing_authority": {"type": "string"},
+    "remarks": {"type": "string"}
+  },
+  "required": ["claim_id", "dl_no", "name", "dob", "valid_to"]
+}
