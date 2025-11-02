@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import Badge from "@/components/shared/Badge";
 import ReassignModal from "@/components/claims/ReassignModal";
 import { fetchClaims, ClaimResponse } from "@/api/claims";
+import { getQueues } from "@/api/queues";
 import { useClaimsWebSocket } from "@/hooks/useClaimsWebSocket";
 
 const TeamClaimsPage = () => {
@@ -14,11 +15,24 @@ const TeamClaimsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSeverity, setSelectedSeverity] = useState("");
   const [selectedQueue, setSelectedQueue] = useState("");
+  const [selectedDept, setSelectedDept] = useState("");
+  const [queueOptions, setQueueOptions] = useState<string[]>([]);
   const [showReassignModal, setShowReassignModal] = useState(false);
   const [selectedClaimId, setSelectedClaimId] = useState<string | null>(null);
 
   useEffect(() => {
     loadClaims();
+    // Load queue options for filter dropdown
+    (async () => {
+      try {
+        const qs = await getQueues();
+        const names = Array.isArray(qs) ? qs.map((q: any) => q.name).filter(Boolean) : [];
+        setQueueOptions(names);
+      } catch (e) {
+        // Fallback to existing defaults if API not available
+        setQueueOptions(["Fast Track", "Standard Review", "Complex Claims", "SIU (Fraud)"]);
+      }
+    })();
   }, []);
 
   useClaimsWebSocket({
@@ -44,7 +58,21 @@ const TeamClaimsPage = () => {
         queue: selectedQueue || undefined,
         search: searchTerm || undefined,
       });
-      setClaims(data);
+      // Apply department filter client-side
+      const filtered = (selectedDept
+        ? data.filter((c: any) => {
+            const queue = (c.queue || c.routing_team || "").toLowerCase();
+            const claimType = (c.claim_type || c.loss_type || "").toLowerCase();
+            // Try to infer insurance type from analyses if present
+            const analyses = (c.analyses || {}) as Record<string, any>;
+            const anyIns = Object.values(analyses).find((a: any) => a && a.insurance_type);
+            const ins = anyIns ? String((anyIns as any).insurance_type).toLowerCase() : "";
+            const isHealth = ins === "health" || claimType === "medical" || queue.includes("health");
+            const dept = isHealth ? "Health" : "Accident";
+            return dept.toLowerCase() === selectedDept.toLowerCase();
+          })
+        : data);
+      setClaims(filtered);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to load claims";
@@ -64,6 +92,10 @@ const TeamClaimsPage = () => {
 
   const handleQueueFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedQueue(e.target.value);
+  };
+
+  const handleDeptFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedDept(e.target.value);
   };
 
   const handleReassign = (claimId: string) => {
@@ -152,7 +184,6 @@ const TeamClaimsPage = () => {
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
                 <option value="High">High</option>
-                <option value="Critical">Critical</option>
               </select>
             </div>
 
@@ -168,10 +199,26 @@ const TeamClaimsPage = () => {
                 className="w-full px-4 py-2 rounded-lg bg-[#1a1a22] border border-[#2a2a32] text-[#f3f4f6] focus:outline-none focus:ring-2 focus:ring-[#a855f7] transition-all duration-300"
               >
                 <option value="">All Queues</option>
-                <option value="Fraud Detection">Fraud Detection</option>
-                <option value="Auto Claims">Auto Claims</option>
-                <option value="Standard">Standard</option>
-                <option value="Priority">Priority</option>
+                {queueOptions.map((name) => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex-1">
+              <label htmlFor="dept-filter" className="block text-xs font-medium text-[#9ca3af] mb-2">
+                Department
+              </label>
+              <select
+                id="dept-filter"
+                value={selectedDept}
+                onChange={handleDeptFilter}
+                aria-label="Filter claims by department"
+                className="w-full px-4 py-2 rounded-lg bg-[#1a1a22] border border-[#2a2a32] text-[#f3f4f6] focus:outline-none focus:ring-2 focus:ring-[#a855f7] transition-all duration-300"
+              >
+                <option value="">All Departments</option>
+                <option value="Health">Health</option>
+                <option value="Accident">Accident</option>
               </select>
             </div>
 

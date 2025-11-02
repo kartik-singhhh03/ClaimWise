@@ -128,6 +128,125 @@ const ClaimDetailPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Claim Details */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Key Details extracted from PDFs (at the top as requested) */}
+            {(() => {
+              const analyses: Record<string, any> = (claim as any).analyses || {};
+
+              // Helper to safely read first non-empty value from possible keys
+              const first = (...vals: any[]) => vals.find((v) => v !== undefined && v !== null && String(v).trim() !== "");
+
+              const accord = analyses.acord || analyses.accord || {};
+              const lossDoc = analyses.loss || {};
+              const firDoc = analyses.fir || {};
+              const hospitalDoc = analyses.hospital || {};
+
+              const exAccord = accord.extraction || {};
+              const exLoss = lossDoc.extraction || {};
+              const exFir = firDoc.extraction || {};
+              const exHospital = hospitalDoc.extraction || {};
+
+              const claimNo = first(
+                (claim as any).claim_number,
+                claim.id,
+                exAccord.claim_id,
+                exLoss.claim_id,
+                exFir.claim_id,
+                exHospital.claim_id,
+                claim.policy_no,
+                claim.policyNumber
+              );
+
+              const incidentDate = first(
+                exAccord.incident_date,
+                exFir.incident_date,
+                exLoss.loss_date
+              );
+
+              const insuranceStart = first(
+                exAccord.insurance_start_date
+              );
+
+              const insuranceEnd = first(
+                exAccord.insurance_expiry_date
+              );
+
+              const damageAmount = first(
+                exLoss.approved_repair_amount,
+                exLoss.estimated_damage_cost
+              );
+
+              const damageType = first(
+                exLoss.total_loss === true ? "Total Loss" : undefined,
+                exLoss.total_loss === false ? "Repairable" : undefined,
+                (claim as any).loss_type
+              );
+
+              const patientOrVehicle = first(
+                exHospital.patient_id,
+                exAccord.patient_id,
+                exAccord.registration
+              );
+
+              const hasAny = first(claimNo, incidentDate, insuranceStart, insuranceEnd, damageAmount, damageType, patientOrVehicle);
+
+              if (!hasAny) return null;
+
+              const fmtDate = (d?: string) => {
+                try { return d ? new Date(d).toLocaleDateString() : undefined; } catch { return d; }
+              };
+
+              return (
+                <div className="bg-[#1a1a22] border border-[#2a2a32] rounded-lg p-6 hover:border-[#a855f7]/30 transition-all duration-300">
+                  <h2 className="text-xl font-semibold text-[#f3f4f6] mb-4">Key Details (from PDFs)</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {claimNo && (
+                      <div>
+                        <p className="text-xs text-[#9ca3af] mb-1">Claim Number</p>
+                        <p className="text-sm font-medium text-[#f3f4f6] break-words">{String(claimNo)}</p>
+                      </div>
+                    )}
+                    {incidentDate && (
+                      <div>
+                        <p className="text-xs text-[#9ca3af] mb-1">Incident / Loss Date</p>
+                        <p className="text-sm font-medium text-[#f3f4f6]">{fmtDate(String(incidentDate))}</p>
+                      </div>
+                    )}
+                    {insuranceStart && (
+                      <div>
+                        <p className="text-xs text-[#9ca3af] mb-1">Insurance Start</p>
+                        <p className="text-sm font-medium text-[#f3f4f6]">{fmtDate(String(insuranceStart))}</p>
+                      </div>
+                    )}
+                    {insuranceEnd && (
+                      <div>
+                        <p className="text-xs text-[#9ca3af] mb-1">Insurance Expiry</p>
+                        <p className="text-sm font-medium text-[#f3f4f6]">{fmtDate(String(insuranceEnd))}</p>
+                      </div>
+                    )}
+                    {damageAmount !== undefined && damageAmount !== null && (
+                      <div>
+                        <p className="text-xs text-[#9ca3af] mb-1">Damage Amount</p>
+                        <p className="text-sm font-medium text-[#f3f4f6]">{
+                          typeof damageAmount === 'number' ? `$${damageAmount.toLocaleString()}` : String(damageAmount)
+                        }</p>
+                      </div>
+                    )}
+                    {damageType && (
+                      <div>
+                        <p className="text-xs text-[#9ca3af] mb-1">Type of Damage</p>
+                        <p className="text-sm font-medium text-[#f3f4f6]">{String(damageType)}</p>
+                      </div>
+                    )}
+                    {patientOrVehicle && (
+                      <div>
+                        <p className="text-xs text-[#9ca3af] mb-1">Patient ID / Registration</p>
+                        <p className="text-sm font-medium text-[#f3f4f6] break-words">{String(patientOrVehicle)}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
             {/* Claimant Information */}
             <div className="bg-[#1a1a22] border border-[#2a2a32] rounded-lg p-6 hover:border-[#a855f7]/30 transition-all duration-300">
               <h2 className="text-xl font-semibold text-[#f3f4f6] mb-4">

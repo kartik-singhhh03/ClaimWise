@@ -45,13 +45,6 @@ class PathwayClaimPipeline:
     
     def _init_pathway_tables(self):
         """Initialize Pathway tables and data structures"""
-        # Note: Pathway schema building is simplified here
-        # In a full Pathway implementation, we would use proper connectors
-        # For now, we use Pathway-style reactive logic without full table setup
-        # since Pathway may not be available or properly configured
-        
-        # We'll use in-memory data structures with Pathway-style processing
-        # This allows the code to work whether Pathway is fully configured or not
         self.claims_table = None  # Will be created dynamically if needed
         self.rules_table = None   # Will be created dynamically if needed
         self.routed_output = None
