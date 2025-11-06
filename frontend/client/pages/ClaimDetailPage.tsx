@@ -6,6 +6,7 @@ import Badge from "@/components/shared/Badge";
 import PdfViewerModal from "@/components/shared/PdfViewerModal";
 import ReassignModal from "@/components/claims/ReassignModal";
 import { fetchClaim, ClaimDetailResponse } from "@/api/claims";
+import ClaimChat from "@/components/claims/ClaimChat";
 
 const ClaimDetailPage = () => {
   const navigate = useNavigate();
@@ -125,7 +126,7 @@ const ClaimDetailPage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Claim Details */}
           <div className="lg:col-span-2 space-y-6">
             {/* Key Details extracted from PDFs (at the top as requested) */}
@@ -547,8 +548,18 @@ const ClaimDetailPage = () => {
             </div>
           </div>
 
-          {/* Right Column - Claim Details, ML Scores, Routing, & Documents */}
+          {/* Right Column - Claim Assistant + Details, ML Scores, Routing, & Documents */}
           <div className="space-y-6">
+            {/* Claim AI Assistant (Gemini) */}
+            <ClaimChat
+              claimId={claim.id}
+              claimSummary={{
+                claimant: claim.claimant,
+                claim_number: (claim as any).claim_number || claim.id,
+                policy_no: (claim as any).policy_no || (claim as any).policyNumber,
+                loss_type: claim.loss_type,
+              }}
+            />
             {/* Claim Information Card */}
             <div className="bg-[#1a1a22] border border-[#2a2a32] rounded-lg p-6 hover:border-[#a855f7]/30 transition-all duration-300">
               <h3 className="text-lg font-semibold text-[#f3f4f6] mb-4">

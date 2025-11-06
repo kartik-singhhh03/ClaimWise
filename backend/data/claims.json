@@ -1,5 +1,84 @@
 [
   {
+    "id": "CLM-1762439794119",
+    "claim_number": "CLM-1762439794119",
+    "claimant": "Rahul",
+    "policy_no": "CLM-1762439794119",
+    "loss_type": "medical",
+    "claim_type": "medical",
+    "created_at": "2025-11-06T14:36:34.997824Z",
+    "severity": "High",
+    "severity_level": "High",
+    "confidence": 0.85,
+    "queue": "Accident Dept - High",
+    "routing_team": "Accident Dept - High",
+    "final_team": "Accident Dept - High",
+    "status": "Processing",
+    "email": "rahulsingh@gmail.com",
+    "description": "",
+    "rationale": "",
+    "evidence": [],
+    "ai_analysis": {},
+    "sources": [],
+    "attachments": [
+      {
+        "filename": "ACORD.pdf",
+        "url": "/files/CLM-1762439794119_acord.pdf",
+        "type": "acord"
+      },
+      {
+        "filename": "LOSS.pdf",
+        "url": "/files/CLM-1762439794119_loss.pdf",
+        "type": "loss"
+      },
+      {
+        "filename": "HOSPITAL.pdf",
+        "url": "/files/CLM-1762439794119_hospital.pdf",
+        "type": "hospital"
+      }
+    ],
+    "assignee": "Senior Adjuster",
+    "adjuster": "Senior Adjuster",
+    "ml_scores": {
+      "fraud_score": 0.15,
+      "complexity_score": 4.0,
+      "severity_level": "High",
+      "fraud_label": 0,
+      "claim_category": "health",
+      "litigation_score": 0.5,
+      "litigation_flag": true,
+      "litigation_reasons": [
+        "Injuries reported",
+        "High severity/complexity"
+      ],
+      "subrogation_score": 0.25,
+      "subrogation_flag": false,
+      "subrogation_reasons": [
+        "Significant damage, consistent"
+      ]
+    },
+    "routing": {
+      "routing_team": "Health Dept - High",
+      "adjuster": "Senior Adjuster",
+      "routing_reasons": [
+        "Complexity score is 4.0 and Severity score is High so routed to this team"
+      ],
+      "routing_reason": "Complexity score is 4.0 and Severity score is High so routed to this team",
+      "rule_applied": true
+    },
+    "fraud_score": 0.15,
+    "complexity_score": 4.0,
+    "history": [
+      {
+        "type": "reassign",
+        "queue": "Accident Dept - High",
+        "assignee": "Senior Adjuster",
+        "note": "",
+        "at": "2025-11-06T14:37:13.906474Z"
+      }
+    ]
+  },
+  {
     "id": "CLM-1762439198561",
     "claim_number": "CLM-1762439198561",
     "claimant": "Mayank",
